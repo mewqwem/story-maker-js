@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>StoryMaker JS</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabStory" onclick="switchTab('story')">
+        StoryMaker
+      </button>
+      <button
+        class="tab-btn inactive"
+        id="tabRewrite"
+        onclick="switchTab('rewrite')"
+      >
+        ReWrite
+      </button>
+    </div>
+
+    <div class="container">
+      <div class="main-panel">
+        <div id="storyContent">
+          <div class="input-group">
+            <label>Project Name</label>
+            <input
+              type="text"
+              id="projectName"
+              placeholder="Enter project name..."
+              value="My_Story_01"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Template</label>
+            <select id="templateSelect">
+              <option value="" disabled selected>Select template...</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Title</label>
+            <input
+              type="text"
+              id="titleInput"
+              placeholder="Enter title (e.g. A cat in space)..."
+            />
+          </div>
+
+          <div class="row">
+            <div class="input-group half">
+              <label>Voice</label>
+              <select id="voiceSelect">
+                <option value="en-US-ChristopherNeural">
+                  🇺🇸 Christopher (Male)
+                </option>
+                <option value="uk-UA-PolinaNeural">🇺🇦 Polina (Female)</option>
+                <option value="de-DE-killianNeural">Killian (DE)</option>
+              </select>
+            </div>
+            <div class="input-group half">
+              <label>Story Language</label>
+              <select id="langSelect">
+                <option value="English">English</option>
+                <option value="Ukrainian">Ukrainian</option>
+                <option value="German">German</option>
+                <option value="Spanish">Spanish</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row buttons-row">
+            <button class="btn-blue" onclick="chooseFolder()">
+              📁 Choose Folder
+            </button>
+            <button class="btn-blue" onclick="findPromptJson()">
+              {} Find Prompt JSON
+            </button>
+          </div>
+          <div
+            id="folderPathDisplay"
+            style="font-size: 11px; color: gray; margin-bottom: 10px"
+          >
+            Output: Desktop
+          </div>
+
+          <button class="btn-green" onclick="startQueue()">Add to Queue</button>
+        </div>
+
+        <div
+          id="rewriteContent"
+          style="display: none; text-align: center; padding-top: 50px"
+        >
+          <h2>SOON... 🕒</h2>
+          <p>This feature is under construction.</p>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="panel-box">
+          <label class="panel-title">Settings / Logs</label>
+          <div id="logArea" class="log-box">Wait for start...</div>
+        </div>
+
+        <div class="input-group">
+          <label for="modelSelect">Обери модель Gemini:</label>
+          <select id="modelSelect" class="input-field">
+            <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash</option>
+
+            <option value="gemini-2.0-flash-lite-preview-02-05">
+              Gemini 2.0 Flash Lite
+            </option>
+
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
