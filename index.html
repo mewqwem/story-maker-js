@@ -1,125 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <title>StoryMaker JS</title>
+    <title>AI Story Generator</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
-    <div class="tabs">
-      <button class="tab-btn active" id="tabStory" onclick="switchTab('story')">
-        StoryMaker
+    <div class="sidebar">
+      <button
+        class="sidebar-btn active"
+        onclick="showPage('generator')"
+        title="Генератор"
+      >
+        <i class="fas fa-magic"></i>
       </button>
       <button
-        class="tab-btn inactive"
-        id="tabRewrite"
-        onclick="switchTab('rewrite')"
+        class="sidebar-btn"
+        onclick="showPage('settings')"
+        title="Налаштування"
       >
-        ReWrite
+        <i class="fas fa-cog"></i>
       </button>
     </div>
 
-    <div class="container">
-      <div class="main-panel">
-        <div id="storyContent">
-          <div class="input-group">
-            <label>Project Name</label>
-            <input
-              type="text"
-              id="projectName"
-              placeholder="Enter project name..."
-              value="My_Story_01"
-            />
-          </div>
+    <div class="content">
+      <div id="page-generator" class="page active">
+        <h2>Генератор Історій</h2>
 
-          <div class="input-group">
-            <label>Template</label>
-            <select id="templateSelect">
-              <option value="" disabled selected>Select template...</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label>Title</label>
-            <input
-              type="text"
-              id="titleInput"
-              placeholder="Enter title (e.g. A cat in space)..."
-            />
-          </div>
-
-          <div class="row">
-            <div class="input-group half">
-              <label>Voice</label>
-              <select id="voiceSelect">
-                <option value="en-US-ChristopherNeural">
-                  🇺🇸 Christopher (Male)
-                </option>
-                <option value="uk-UA-PolinaNeural">🇺🇦 Polina (Female)</option>
-                <option value="de-DE-killianNeural">Killian (DE)</option>
-              </select>
-            </div>
-            <div class="input-group half">
-              <label>Story Language</label>
-              <select id="langSelect">
-                <option value="English">English</option>
-                <option value="Ukrainian">Ukrainian</option>
-                <option value="German">German</option>
-                <option value="Spanish">Spanish</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row buttons-row">
-            <button class="btn-blue" onclick="chooseFolder()">
-              📁 Choose Folder
-            </button>
-            <button class="btn-blue" onclick="findPromptJson()">
-              {} Find Prompt JSON
-            </button>
-          </div>
-          <div
-            id="folderPathDisplay"
-            style="font-size: 11px; color: gray; margin-bottom: 10px"
-          >
-            Output: Desktop
-          </div>
-
-          <button class="btn-green" onclick="startQueue()">Add to Queue</button>
-        </div>
-
-        <div
-          id="rewriteContent"
-          style="display: none; text-align: center; padding-top: 50px"
-        >
-          <h2>SOON... 🕒</h2>
-          <p>This feature is under construction.</p>
-        </div>
-      </div>
-
-      <div class="side-panel">
-        <div class="panel-box">
-          <label class="panel-title">Settings / Logs</label>
-          <div id="logArea" class="log-box">Wait for start...</div>
+        <div class="input-group">
+          <label>Назва Проекту:</label>
+          <input type="text" id="projectName" placeholder="MyHorrorStory_01" />
         </div>
 
         <div class="input-group">
-          <label for="modelSelect">Обери модель Gemini:</label>
-          <select id="modelSelect" class="input-field">
-            <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash</option>
+          <label>Файл Промптів (JSON):</label>
+          <div style="display: flex; gap: 10px">
+            <input
+              type="text"
+              id="promptFile"
+              readonly
+              placeholder="Оберіть prompts.json..."
+            />
+            <button class="secondary" onclick="selectFile()">📁 Обрати</button>
+          </div>
+        </div>
 
-            <option value="gemini-2.0-flash-lite-preview-02-05">
-              Gemini 2.0 Flash Lite
-            </option>
-
-            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-
-            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+        <div class="input-group">
+          <label>Шаблон (Prompt Template):</label>
+          <select id="promptSelect">
+            <option value="" disabled selected>Спочатку оберіть файл...</option>
           </select>
+        </div>
+
+        <div class="input-group">
+          <label>Назва Історії (Title):</label>
+          <input
+            type="text"
+            id="storyTitle"
+            placeholder="Why You Feel Alone..."
+          />
+        </div>
+
+        <div style="display: flex; gap: 10px">
+          <div class="input-group" style="flex: 1">
+            <label>Мова:</label>
+            <select
+              id="language"
+              onchange="saveConfig('lastLanguage', this.value)"
+            >
+              <option value="English">English</option>
+              <option value="German">German</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="Ukrainian">Ukrainian</option>
+            </select>
+          </div>
+
+          <div class="input-group" style="flex: 1">
+            <label>Голос (Edge TTS):</label>
+            <select id="voice" onchange="saveConfig('lastVoice', this.value)">
+              <option value="de-DE-ConradNeural">Conrad (Germany)</option>
+              <option value="de-DE-KillianNeural">Killian (Germany)</option>
+              <option value="es-VE-SebastianNeural">Sebastian (Spain)</option>
+              <option value="en-US-ChristopherNeural">
+                Christopher (English)
+              </option>
+
+              <option value="uk-UA-OstapNeural">Ostap (UA)</option>
+            </select>
+          </div>
+
+          <div class="input-group" style="flex: 1">
+            <label>Модель AI:</label>
+            <select
+              id="modelSelect"
+              onchange="saveConfig('lastModel', this.value)"
+            >
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+              <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Папка Виводу:</label>
+          <div style="display: flex; gap: 10px">
+            <input
+              type="text"
+              id="outputFolder"
+              readonly
+              placeholder="Куди зберігати результат..."
+            />
+            <button class="secondary" onclick="selectFolder()">
+              📁 Обрати
+            </button>
+          </div>
+        </div>
+
+        <button class="primary" onclick="startProcess()">
+          🚀 Почати Генерацію
+        </button>
+
+        <div id="logs"></div>
+      </div>
+
+      <div id="page-settings" class="page">
+        <h2>Налаштування</h2>
+
+        <div class="input-group">
+          <label>Google API Key:</label>
+          <div class="password-container">
+            <input type="password" id="apiKeyInput" placeholder="AIzaSy..." />
+            <i
+              class="fas fa-eye toggle-password"
+              onclick="toggleApiKeyVisibility()"
+            ></i>
+          </div>
+        </div>
+
+        <button class="primary" onclick="saveApiKey()" style="width: auto">
+          💾 Зберегти ключ
+        </button>
+        <p
+          id="saveStatus"
+          style="color: #4caf50; display: none; margin-top: 10px"
+        >
+          Збережено!
+        </p>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+        <div style="color: #888; font-size: 12px">
+          Версія: <span id="appVersion">1.0.0</span>
         </div>
       </div>
     </div>
 
-    <script src="renderer.js"></script>
+    <div id="updateStatus" class="update-bar"></div>
+
+    <script>
+      const { ipcRenderer } = require("electron");
+
+      let promptsData = {};
+
+      // === ІНІЦІАЛІЗАЦІЯ ПРИ ЗАПУСКУ ===
+      window.onload = async () => {
+        // 1. Завантажуємо API ключ
+        const key = await ipcRenderer.invoke("get-setting", "apiKey");
+        if (key) document.getElementById("apiKeyInput").value = key;
+
+        // 2. Завантажуємо шлях до prompts.json
+        const savedPromptPath = await ipcRenderer.invoke(
+          "get-setting",
+          "promptPath"
+        );
+        if (savedPromptPath) {
+          loadPromptsFromFile(savedPromptPath);
+        }
+
+        // 3. Завантажуємо папку виводу
+        const savedOutputDir = await ipcRenderer.invoke(
+          "get-setting",
+          "outputDir"
+        );
+        if (savedOutputDir)
+          document.getElementById("outputFolder").value = savedOutputDir;
+
+        // 4. Відновлюємо вибір мови, голосу та моделі
+        const lastVoice = await ipcRenderer.invoke("get-setting", "lastVoice");
+        if (lastVoice) document.getElementById("voice").value = lastVoice;
+
+        const lastLang = await ipcRenderer.invoke(
+          "get-setting",
+          "lastLanguage"
+        );
+        if (lastLang) document.getElementById("language").value = lastLang;
+
+        const lastModel = await ipcRenderer.invoke("get-setting", "lastModel");
+        if (lastModel) document.getElementById("modelSelect").value = lastModel;
+      };
+
+      // === ЛОГІКА ЗБЕРЕЖЕННЯ НАЛАШТУВАНЬ ===
+      async function saveConfig(key, value) {
+        await ipcRenderer.invoke("save-setting", key, value);
+      }
+
+      async function saveApiKey() {
+        const key = document.getElementById("apiKeyInput").value;
+        await saveConfig("apiKey", key);
+        const status = document.getElementById("saveStatus");
+        status.style.display = "block";
+        setTimeout(() => (status.style.display = "none"), 3000);
+      }
+
+      // === РОБОТА З ФАЙЛАМИ ===
+
+      // Вибір JSON файлу промптів
+      async function selectFile() {
+        const path = await ipcRenderer.invoke("select-file");
+        if (path) {
+          loadPromptsFromFile(path);
+          // Зберігаємо шлях, щоб наступного разу не шукати
+          saveConfig("promptPath", path);
+        }
+      }
+
+      // Читання та парсинг JSON
+      async function loadPromptsFromFile(path) {
+        const json = await ipcRenderer.invoke("read-json", path);
+        if (json) {
+          document.getElementById("promptFile").value = path;
+          promptsData = json;
+          const select = document.getElementById("promptSelect");
+          select.innerHTML = "";
+
+          Object.keys(json).forEach((key) => {
+            const opt = document.createElement("option");
+            opt.value = key;
+            opt.innerText = key;
+            select.appendChild(opt);
+          });
+        } else {
+          alert("Не вдалося прочитати файл або він порожній!");
+        }
+      }
+
+      // Вибір папки для результатів
+      async function selectFolder() {
+        const path = await ipcRenderer.invoke("select-folder");
+        if (path) {
+          document.getElementById("outputFolder").value = path;
+          saveConfig("outputDir", path);
+        }
+      }
+
+      // === ЗАПУСК ===
+      async function startProcess() {
+        const logsDiv = document.getElementById("logs");
+        logsDiv.innerHTML = "Запуск...<br>";
+
+        const data = {
+          projectName: document.getElementById("projectName").value,
+          templateText:
+            promptsData[document.getElementById("promptSelect").value],
+          title: document.getElementById("storyTitle").value,
+          voice: document.getElementById("voice").value,
+          language: document.getElementById("language").value,
+          outputFolder: document.getElementById("outputFolder").value,
+          modelName: document.getElementById("modelSelect").value,
+        };
+
+        if (!data.outputFolder || !data.templateText) {
+          alert("Заповніть поля та оберіть файл промптів!");
+          return;
+        }
+
+        const res = await ipcRenderer.invoke("start-process", data);
+        if (!res.success) alert("Помилка: " + res.error);
+      }
+
+      // === ІНТЕРФЕЙС ===
+      function showPage(pageName) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".sidebar-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(`page-${pageName}`).classList.add("active");
+
+        const btnIndex = pageName === "generator" ? 0 : 1;
+        document
+          .querySelectorAll(".sidebar-btn")
+          [btnIndex].classList.add("active");
+      }
+
+      function toggleApiKeyVisibility() {
+        const input = document.getElementById("apiKeyInput");
+        const icon = document.querySelector(".toggle-password");
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+
+      // Логи та Оновлення
+      ipcRenderer.on("log-update", (e, msg) => {
+        const logs = document.getElementById("logs");
+        logs.innerHTML += `> ${msg}<br>`;
+        logs.scrollTop = logs.scrollHeight;
+      });
+
+      ipcRenderer.on("update-message", (e, text) => {
+        const bar = document.getElementById("updateStatus");
+        bar.innerText = text;
+        bar.style.display = "block";
+      });
+    </script>
   </body>
 </html>

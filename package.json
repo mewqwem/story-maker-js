@@ -1,14 +1,59 @@
 {
-  "name": "story-maker-js",
-  "version": "1.0.0",
+  "name": "ai-story-generator",
+  "version": "1.0.1",
+  "description": "AI Story Generator with Auto-Updates and Gemini Integration",
   "main": "main.js",
+  "author": "Oleg",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win --publish always"
   },
+  "keywords": [
+    "electron",
+    "gemini",
+    "ai",
+    "tts"
+  ],
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
-    "dotenv": "^16.4.0",
-    "electron": "^33.0.0",
+    "@google/generative-ai": "^0.1.0",
+    "dotenv": "^16.4.5",
+    "electron-log": "^5.1.0",
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.2.1",
     "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mewqwem/story-maker-js"
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "mewqwem",
+      "repo": "story-maker-js"
+    }
+  ],
+  "build": {
+    "appId": "com.oleg.storygen",
+    "productName": "AI Story Generator",
+    "files": [
+      "**/*",
+      "!node_modules/electron-builder/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico",
+      "publish": [
+        "github"
+      ]
+    }
   }
 }
