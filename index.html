@@ -36,6 +36,9 @@
       >
         <i class="fas fa-cog"></i>
       </button>
+      <button class="sidebar-btn" onclick="showPage('history')" title="Історія">
+        <i class="fas fa-history"></i>
+      </button>
     </div>
 
     <div class="content">
@@ -195,6 +198,11 @@
           Версія: <span id="appVersion">1.0.0</span>
         </div>
       </div>
+
+      <div id="page-history" class="page">
+        <h2>Історія Генерацій</h2>
+        <div id="historyList"></div>
+      </div>
     </div>
 
     <div id="updateStatus" class="update-bar"></div>
@@ -251,6 +259,9 @@
         // Динамічна версія
         const version = await ipcRenderer.invoke("get-version");
         document.getElementById("appVersion").innerText = version;
+
+        // Завантажуємо історію
+        loadHistory();
       };
 
       // === ЛОГІКА ЗБЕРЕЖЕННЯ НАЛАШТУВАНЬ ===
@@ -350,10 +361,16 @@
           .forEach((b) => b.classList.remove("active"));
         document.getElementById(`page-${pageName}`).classList.add("active");
 
-        const btnIndex = pageName === "generator" ? 0 : 1;
+        const btnIndex =
+          pageName === "generator" ? 0 : pageName === "settings" ? 1 : 2;
         document
           .querySelectorAll(".sidebar-btn")
           [btnIndex].classList.add("active");
+
+        // Якщо переходимо на історію, завантажуємо дані
+        if (pageName === "history") {
+          loadHistory();
+        }
       }
 
       function toggleApiKeyVisibility() {
@@ -395,6 +412,34 @@
       document.getElementById("close-btn").addEventListener("click", () => {
         ipcRenderer.send("close-window");
       });
+
+      // Завантаження історії
+      async function loadHistory() {
+        const history = await ipcRenderer.invoke("get-history");
+        const list = document.getElementById("historyList");
+        list.innerHTML = "";
+        if (history.length === 0) {
+          list.innerHTML = "<p>Немає історій генерацій.</p>";
+          return;
+        }
+        history.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "history-item";
+          div.innerHTML = `
+            <h4>${item.title}</h4>
+            <p>Проект: ${item.projectName}</p>
+            <p>Шлях: ${item.path}</p>
+            <p>Час: ${new Date(item.timestamp).toLocaleString()}</p>
+            <button onclick="openFolder('${item.path}')">Відкрити папку</button>
+          `;
+          list.appendChild(div);
+        });
+      }
+
+      // Відкриття папки
+      function openFolder(path) {
+        ipcRenderer.invoke("open-folder", path);
+      }
     </script>
   </body>
 </html>

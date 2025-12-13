@@ -284,6 +284,18 @@ Final CTA: Gentle call to comments (e.g.: "Thank you for watching! Let me know i
     sendLog("✨ Все готово! Відкриваю папку.");
     shell.openPath(finalPath);
 
+    // Зберігаємо історію генерації
+    const history = store.get("generationHistory", []);
+    history.unshift({
+      title,
+      projectName,
+      path: finalPath,
+      timestamp: new Date().toISOString(),
+    });
+    // Обмежуємо до 10 останніх
+    if (history.length > 10) history.splice(10);
+    store.set("generationHistory", history);
+
     return { success: true };
   } catch (error) {
     console.error(error);
@@ -319,4 +331,14 @@ ipcMain.handle("read-json", async (event, filePath) => {
 // Динамічна версія
 ipcMain.handle("get-version", () => {
   return app.getVersion();
+});
+
+// Отримання історії генерацій
+ipcMain.handle("get-history", () => {
+  return store.get("generationHistory", []);
+});
+
+// Відкриття папки
+ipcMain.handle("open-folder", (event, path) => {
+  shell.openPath(path);
 });
