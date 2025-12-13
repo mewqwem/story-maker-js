@@ -24,8 +24,10 @@ let mainWindow;
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1440,
-    height: 960, // Трохи збільшив висоту
+    height: 960,
     backgroundColor: "#1e1e1e",
+    icon: path.join(__dirname, "icon.ico"),
+    frame: false, // Вимикаємо стандартний заголовок
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -42,6 +44,23 @@ function createWindow() {
 }
 
 app.whenReady().then(createWindow);
+
+// Обробники для власного заголовка
+ipcMain.on("minimize-window", () => {
+  mainWindow.minimize();
+});
+
+ipcMain.on("maximize-window", () => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize();
+  } else {
+    mainWindow.maximize();
+  }
+});
+
+ipcMain.on("close-window", () => {
+  mainWindow.close();
+});
 
 // === ЛОГІКА АВТО-ОНОВЛЕННЯ ===
 
@@ -197,8 +216,49 @@ ipcMain.handle("start-process", async (event, data) => {
 
     sendLog("📝 Gemini пише опис...");
     const descPrompt = `
-        Now, based strictly on the story you just generated, write a highly clickable and SEO-optimized YouTube video description.
-        (Same prompt as before...)
+        Звісно, ось переписаний промпт англійською мовою, який відповідає всім твоїм вимогам:
+
+You are an expert YouTube SEO copywriter for the Carl Jung / depth psychology / female empowerment niche.
+
+Your task is to write a highly clickable and SEO-optimized video description (380–550 words) that perfectly matches the core style rules and structure outlined below. The content must be based on the specific video topic and story you provided previously (insert the topic and story in place of the brackets below).
+
+Video Topic: [Insert the main video topic here, e.g., The Shadow Side of Anima, The Archetype of the Hetaera, Female Loneliness] Brief Story/Context: [Insert a short summary of the story or the main points discussed in the video here]
+
+Core Style Rules (Must be followed exactly):
+
+First 2–3 lines (visible before “Show more”): The strongest emotional hook + main keyword in the very first sentence.
+
+Example: "Many believe that not having friends is a weakness, but the truth is quite different..."
+
+Tone:
+
+Deep but simple, never academic.
+
+Slightly mysterious, empowering, speaks directly to women who are “waking up.”
+
+Formatting:
+
+Short paragraphs (2–4 sentences max).
+
+Heavy use of second-person ("you," "your," "do you feel").
+
+Ends most paragraphs with a subtle question or realization.
+
+Exact Structure:
+
+Hook: 1–2 sentences, visible before “Show more.”
+
+Core Idea: 4–6 short paragraphs explaining the main idea + what the viewer will discover.
+
+Q&A Paragraph: 1 paragraph with 2–3 questions the video answers (e.g., "In this video, we dive deep into: ...").
+
+Soft CTA: Gentle call-to-action + "Thank you for watching."
+
+Hashtags Section: 38–50 relevant hashtags, lower-case, no spaces after the comma (e.g.: #carljung,#depthpsychology,#shadowwork).
+
+Search Terms Section: 40–60 real search phrases related to the topic (each on a new line).
+
+Final CTA: Gentle call to comments (e.g.: "Thank you for watching! Let me know in the comments which part hit you the hardest..." or similar).
     `; // Скоротив тут для економії місця, встав свій повний промпт
 
     const descResult = await chat.sendMessage(descPrompt);
@@ -254,4 +314,9 @@ ipcMain.handle("read-json", async (event, filePath) => {
   } catch (e) {
     return null;
   }
+});
+
+// Динамічна версія
+ipcMain.handle("get-version", () => {
+  return app.getVersion();
 });

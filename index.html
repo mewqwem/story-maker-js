@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
+    <!-- Власний заголовок -->
+    <div id="custom-titlebar">
+      <img src="icon.ico" alt="Icon" id="app-icon" />
+      <span id="app-title">AI Story Generator</span>
+      <div class="titlebar-buttons">
+        <button id="minimize-btn" title="Мінімізувати">_</button>
+        <button id="maximize-btn" title="Максимізувати">□</button>
+        <button id="close-btn" title="Закрити">×</button>
+      </div>
+    </div>
+
     <div class="sidebar">
       <button
         class="sidebar-btn active"
@@ -236,6 +247,10 @@
 
         const lastModel = await ipcRenderer.invoke("get-setting", "lastModel");
         if (lastModel) document.getElementById("modelSelect").value = lastModel;
+
+        // Динамічна версія
+        const version = await ipcRenderer.invoke("get-version");
+        document.getElementById("appVersion").innerText = version;
       };
 
       // === ЛОГІКА ЗБЕРЕЖЕННЯ НАЛАШТУВАНЬ ===
@@ -366,6 +381,19 @@
         const bar = document.getElementById("updateStatus");
         bar.innerText = text;
         bar.style.display = "block";
+      });
+
+      // Події для власного заголовка
+      document.getElementById("minimize-btn").addEventListener("click", () => {
+        ipcRenderer.send("minimize-window");
+      });
+
+      document.getElementById("maximize-btn").addEventListener("click", () => {
+        ipcRenderer.send("maximize-window");
+      });
+
+      document.getElementById("close-btn").addEventListener("click", () => {
+        ipcRenderer.send("close-window");
       });
     </script>
   </body>

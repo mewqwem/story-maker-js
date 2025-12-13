@@ -8,6 +8,56 @@ body {
   overflow: hidden;
 }
 
+/* --- CUSTOM TITLEBAR --- */
+#custom-titlebar {
+  height: 40px;
+  background-color: #252526;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  -webkit-app-region: drag;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+#app-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+}
+
+#app-title {
+  flex: 1;
+  font-size: 14px;
+  color: #fff;
+}
+
+.titlebar-buttons {
+  display: flex;
+}
+
+.titlebar-buttons button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-buttons button:hover {
+  background-color: #3e3e42;
+}
+
+#close-btn:hover {
+  background-color: #e81123;
+}
+
 /* --- SIDEBAR --- */
 .sidebar {
   width: 60px;
@@ -17,6 +67,7 @@ body {
   align-items: center;
   padding-top: 20px;
   border-right: 1px solid #333;
+  margin-top: 40px;
 }
 
 .sidebar-btn {
@@ -43,6 +94,7 @@ body {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  margin-top: 40px;
 }
 
 .page {
