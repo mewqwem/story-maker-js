@@ -2,444 +2,253 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Story Generator</title>
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
-    <!-- Власний заголовок -->
-    <div id="custom-titlebar">
-      <img src="icon.ico" alt="Icon" id="app-icon" />
-      <span id="app-title">AI Story Generator</span>
-      <div class="titlebar-buttons">
-        <button id="minimize-btn" title="Мінімізувати">_</button>
-        <button id="maximize-btn" title="Максимізувати">□</button>
-        <button id="close-btn" title="Закрити">×</button>
+    <header id="titlebar">
+      <div class="title-drag-region">
+        <img src="icon.ico" alt="Logo" class="app-logo-img" />
+        <span class="app-name">AI Story Generator</span>
       </div>
-    </div>
+      <div class="window-controls">
+        <button id="minimize-btn" title="Згорнути">
+          <i class="fa-solid fa-minus"></i>
+        </button>
+        <button id="maximize-btn" title="Розгорнути">
+          <i class="fa-regular fa-square"></i>
+        </button>
+        <button id="close-btn" class="close" title="Закрити">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </header>
 
-    <div class="sidebar">
-      <button
-        class="sidebar-btn active"
-        onclick="showPage('generator')"
-        title="Генератор"
-      >
-        <i class="fas fa-magic"></i>
-      </button>
-      <button
-        class="sidebar-btn"
-        onclick="showPage('settings')"
-        title="Налаштування"
-      >
-        <i class="fas fa-cog"></i>
-      </button>
-      <button class="sidebar-btn" onclick="showPage('history')" title="Історія">
-        <i class="fas fa-history"></i>
-      </button>
-    </div>
+    <div class="main-container">
+      <aside class="sidebar">
+        <nav>
+          <button class="nav-btn active" data-target="page-generator">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Створення</span>
+          </button>
+          <button class="nav-btn" data-target="page-history">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Історія</span>
+          </button>
+          <button class="nav-btn" data-target="page-settings">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Налаштування</span>
+          </button>
+        </nav>
+        <div class="version-info">v<span id="appVersion">1.0.0</span></div>
+      </aside>
 
-    <div class="content">
-      <div id="page-generator" class="page active">
-        <h2>Генератор Історій</h2>
-
-        <div class="input-group">
-          <label>Назва Проекту:</label>
-          <input type="text" id="projectName" placeholder="MyHorrorStory_01" />
-        </div>
-
-        <div class="input-group">
-          <label>Файл Промптів (JSON):</label>
-          <div style="display: flex; gap: 10px">
-            <input
-              type="text"
-              id="promptFile"
-              readonly
-              placeholder="Оберіть prompts.json..."
-            />
-            <button class="secondary" onclick="selectFile()">📁 Обрати</button>
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label>Шаблон (Prompt Template):</label>
-          <select id="promptSelect">
-            <option value="" disabled selected>Спочатку оберіть файл...</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <label>Назва Історії (Title):</label>
-          <input
-            type="text"
-            id="storyTitle"
-            placeholder="Why You Feel Alone..."
-          />
-        </div>
-
-        <div style="display: flex; gap: 10px">
-          <div class="input-group" style="flex: 1">
-            <label>Мова:</label>
-            <select
-              id="language"
-              onchange="saveConfig('lastLanguage', this.value)"
-            >
-              <option value="English">English</option>
-              <option value="German">German</option>
-              <option value="Spanish">Spanish</option>
-              <option value="French">French</option>
-              <option value="Ukrainian">Ukrainian</option>
-            </select>
+      <main class="content">
+        <section id="page-generator" class="page active">
+          <div class="page-header fade-in-up">
+            <h1>Новий Проект</h1>
+            <p class="subtitle">Налаштуйте параметри для генерації історії</p>
           </div>
 
-          <div class="input-group" style="flex: 1">
-            <label>Голос (Edge TTS):</label>
-            <select id="voice" onchange="saveConfig('lastVoice', this.value)">
-              <option value="de-DE-ConradNeural">Conrad (Germany)</option>
-              <option value="de-DE-KillianNeural">Killian (Germany)</option>
-              <option value="es-VE-SebastianNeural">Sebastian (Spain)</option>
-              <option value="en-US-ChristopherNeural">
-                Christopher (English)
-              </option>
+          <div class="form-grid fade-in-up delay-1">
+            <div class="card">
+              <h3><i class="fa-solid fa-folder-open"></i> Основні дані</h3>
+              <div class="input-group">
+                <label for="projectName">Назва проекту</label>
+                <input
+                  type="text"
+                  id="projectName"
+                  placeholder="Наприклад: HorrorStory_01"
+                />
+              </div>
+              <div class="input-group">
+                <label for="storyTitle">Заголовок історії (Title)</label>
+                <input
+                  type="text"
+                  id="storyTitle"
+                  placeholder="Why You Feel Alone..."
+                />
+              </div>
+            </div>
 
-              <option value="uk-UA-OstapNeural">Ostap (UA)</option>
-            </select>
+            <div class="card">
+              <h3><i class="fa-solid fa-file-code"></i> Шаблони та Файли</h3>
+              <div class="input-group">
+                <label>Файл промптів (JSON)</label>
+                <div class="file-select-box">
+                  <input
+                    type="text"
+                    id="promptFileDisplay"
+                    readonly
+                    placeholder="Файл не обрано"
+                  />
+                  <button id="btnSelectJson" class="btn-icon">
+                    <i class="fa-solid fa-folder"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="input-group">
+                <label for="promptSelect">Оберіть шаблон</label>
+                <div class="select-wrapper">
+                  <select id="promptSelect">
+                    <option value="" disabled selected>
+                      — Спочатку завантажте JSON —
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="card full-width">
+              <h3>
+                <i class="fa-solid fa-microchip"></i> Параметри AI та Аудіо
+              </h3>
+              <div class="row-3">
+                <div class="input-group">
+                  <label for="language">Мова тексту</label>
+                  <div class="select-wrapper">
+                    <select id="language">
+                      <option value="English">🇺🇸 English</option>
+                      <option value="German">🇩🇪 German</option>
+                      <option value="Spanish">🇪🇸 Spanish</option>
+                      <option value="French">🇫🇷 French</option>
+                      <option value="Ukrainian">🇺🇦 Ukrainian</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="voice">Голос (Edge TTS)</label>
+                  <div class="select-wrapper">
+                    <select id="voice">
+                      <option value="en-US-ChristopherNeural">
+                        Christopher (US)
+                      </option>
+                      <option value="de-DE-ConradNeural">Conrad (DE)</option>
+                      <option value="de-DE-KillianNeural">Killian (DE)</option>
+                      <option value="es-VE-SebastianNeural">
+                        Sebastian (ES)
+                      </option>
+                      <option value="uk-UA-OstapNeural">Ostap (UA)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="modelSelect">Модель Gemini</label>
+                  <div class="select-wrapper">
+                    <select id="modelSelect">
+                      <option value="gemini-2.0-flash">
+                        Gemini 2.0 Flash ⚡
+                      </option>
+                      <option value="gemini-1.5-pro">Gemini 1.5 Pro 🧠</option>
+                      <option value="gemini-1.5-flash">
+                        Gemini 1.5 Flash 🚀
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card full-width">
+              <div class="input-group">
+                <label>Папка для збереження</label>
+                <div class="file-select-box">
+                  <input
+                    type="text"
+                    id="outputFolderDisplay"
+                    readonly
+                    placeholder="Оберіть папку..."
+                  />
+                  <button id="btnSelectOutput" class="btn-secondary">
+                    Огляд
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="input-group" style="flex: 1">
-            <label>Модель AI:</label>
-            <select
-              id="modelSelect"
-              onchange="saveConfig('lastModel', this.value)"
-            >
-              <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-              <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-              <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label>Папка Виводу:</label>
-          <div style="display: flex; gap: 10px">
-            <input
-              type="text"
-              id="outputFolder"
-              readonly
-              placeholder="Куди зберігати результат..."
-            />
-            <button class="secondary" onclick="selectFolder()">
-              📁 Обрати
+          <div class="actions fade-in-up delay-2">
+            <button id="btnStart" class="btn-primary">
+              <span>Запустити Генерацію</span>
+              <i class="fa-solid fa-rocket"></i>
             </button>
           </div>
-        </div>
 
-        <button class="primary" onclick="startProcess()">
-          🚀 Почати Генерацію
-        </button>
-
-        <div id="logs"></div>
-      </div>
-
-      <div id="page-settings" class="page">
-        <h2>Налаштування</h2>
-
-        <div class="input-group">
-          <label>Google API Key:</label>
-          <div class="password-container">
-            <input type="password" id="apiKeyInput" placeholder="AIzaSy..." />
-            <i
-              class="fas fa-eye toggle-password"
-              onclick="toggleApiKeyVisibility()"
-            ></i>
+          <div class="logs-container fade-in-up delay-3">
+            <div class="logs-header">
+              <span><i class="fa-solid fa-terminal"></i> Status Log</span>
+              <button id="btnClearLogs" title="Очистити">
+                <i class="fa-solid fa-eraser"></i>
+              </button>
+            </div>
+            <div id="logsArea" class="logs-content">
+              <div class="log-placeholder">Очікування запуску...</div>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <button class="primary" onclick="saveApiKey()" style="width: auto">
-          💾 Зберегти ключ
-        </button>
-        <p
-          id="saveStatus"
-          style="color: #4caf50; display: none; margin-top: 10px"
-        >
-          Збережено!
-        </p>
-
-        <hr style="border-color: #333; margin: 20px 0" />
-
-        <div class="input-group">
-          <label>Шлях до Edge TTS (.exe):</label>
-          <div style="display: flex; gap: 10px">
-            <input
-              type="text"
-              id="edgeTtsPathInput"
-              placeholder="C:\Users\...\edge-tts.exe"
-            />
-            <button
-              class="secondary"
-              onclick="saveEdgeTtsPath()"
-              style="min-width: 100px"
-            >
-              💾 Зберегти
-            </button>
+        <section id="page-history" class="page">
+          <div class="page-header fade-in-up">
+            <h1>Історія</h1>
+            <p class="subtitle">Список попередніх генерацій</p>
           </div>
-        </div>
-        <p
-          id="edgeTtsStatus"
-          style="color: #4caf50; display: none; margin-top: 10px"
-        >
-          Шлях збережено!
-        </p>
+          <div id="historyList" class="history-grid fade-in-up delay-1"></div>
+        </section>
 
-        <hr style="border-color: #333; margin: 20px 0" />
-        <div style="color: #888; font-size: 12px">
-          Версія: <span id="appVersion">1.0.0</span>
-        </div>
-      </div>
+        <section id="page-settings" class="page">
+          <div class="page-header fade-in-up">
+            <h1>Налаштування</h1>
+            <p class="subtitle">Конфігурація системи та ключів доступу</p>
+          </div>
 
-      <div id="page-history" class="page">
-        <h2>Історія Генерацій</h2>
-        <div id="historyList"></div>
-      </div>
+          <div class="settings-container fade-in-up delay-1">
+            <div class="card">
+              <h3>Google Gemini API</h3>
+              <div class="input-group">
+                <label>API Key</label>
+                <div class="password-box">
+                  <input
+                    type="password"
+                    id="apiKeyInput"
+                    placeholder="Введіть ключ..."
+                  />
+                  <i
+                    class="fa-solid fa-eye toggle-password"
+                    id="btnToggleKey"
+                  ></i>
+                </div>
+                <button id="btnSaveKey" class="btn-small">Зберегти</button>
+                <span id="msgKeyStatus" class="status-msg"></span>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Edge TTS</h3>
+              <div class="input-group">
+                <label>Шлях до edge-tts.exe</label>
+                <div class="file-select-box">
+                  <input
+                    type="text"
+                    id="edgeTtsPathInput"
+                    placeholder="C:\path\to\edge-tts.exe"
+                  />
+                </div>
+                <button id="btnSaveEdgePath" class="btn-small">Зберегти</button>
+                <span id="msgEdgeStatus" class="status-msg"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <div id="updateStatus" class="update-bar"></div>
+    <div id="updateStatus" class="toast-notification"></div>
 
-    <script>
-      const { ipcRenderer } = require("electron");
-
-      let promptsData = {};
-
-      // === ІНІЦІАЛІЗАЦІЯ ПРИ ЗАПУСКУ ===
-      window.onload = async () => {
-        // 1. Завантажуємо API ключ
-        const key = await ipcRenderer.invoke("get-setting", "apiKey");
-        if (key) document.getElementById("apiKeyInput").value = key;
-
-        // 2. Завантажуємо шлях до Edge TTS
-        const edgeTtsPath = await ipcRenderer.invoke(
-          "get-setting",
-          "edgeTtsPath"
-        );
-        if (edgeTtsPath)
-          document.getElementById("edgeTtsPathInput").value = edgeTtsPath;
-
-        // 3. Завантажуємо шлях до prompts.json
-        const savedPromptPath = await ipcRenderer.invoke(
-          "get-setting",
-          "promptPath"
-        );
-        if (savedPromptPath) {
-          loadPromptsFromFile(savedPromptPath);
-        }
-
-        // 4. Завантажуємо папку виводу
-        const savedOutputDir = await ipcRenderer.invoke(
-          "get-setting",
-          "outputDir"
-        );
-        if (savedOutputDir)
-          document.getElementById("outputFolder").value = savedOutputDir;
-
-        // 5. Відновлюємо вибір мови, голосу та моделі
-        const lastVoice = await ipcRenderer.invoke("get-setting", "lastVoice");
-        if (lastVoice) document.getElementById("voice").value = lastVoice;
-
-        const lastLang = await ipcRenderer.invoke(
-          "get-setting",
-          "lastLanguage"
-        );
-        if (lastLang) document.getElementById("language").value = lastLang;
-
-        const lastModel = await ipcRenderer.invoke("get-setting", "lastModel");
-        if (lastModel) document.getElementById("modelSelect").value = lastModel;
-
-        // Динамічна версія
-        const version = await ipcRenderer.invoke("get-version");
-        document.getElementById("appVersion").innerText = version;
-
-        // Завантажуємо історію
-        loadHistory();
-      };
-
-      // === ЛОГІКА ЗБЕРЕЖЕННЯ НАЛАШТУВАНЬ ===
-      async function saveConfig(key, value) {
-        await ipcRenderer.invoke("save-setting", key, value);
-      }
-
-      async function saveApiKey() {
-        const key = document.getElementById("apiKeyInput").value;
-        await saveConfig("apiKey", key);
-        const status = document.getElementById("saveStatus");
-        status.style.display = "block";
-        setTimeout(() => (status.style.display = "none"), 3000);
-      }
-
-      async function saveEdgeTtsPath() {
-        const path = document.getElementById("edgeTtsPathInput").value;
-        await saveConfig("edgeTtsPath", path);
-        const status = document.getElementById("edgeTtsStatus");
-        status.style.display = "block";
-        setTimeout(() => (status.style.display = "none"), 3000);
-      }
-
-      // === РОБОТА З ФАЙЛАМИ ===
-
-      // Вибір JSON файлу промптів
-      async function selectFile() {
-        const path = await ipcRenderer.invoke("select-file");
-        if (path) {
-          loadPromptsFromFile(path);
-          // Зберігаємо шлях, щоб наступного разу не шукати
-          saveConfig("promptPath", path);
-        }
-      }
-
-      // Читання та парсинг JSON
-      async function loadPromptsFromFile(path) {
-        const json = await ipcRenderer.invoke("read-json", path);
-        if (json) {
-          document.getElementById("promptFile").value = path;
-          promptsData = json;
-          const select = document.getElementById("promptSelect");
-          select.innerHTML = "";
-
-          Object.keys(json).forEach((key) => {
-            const opt = document.createElement("option");
-            opt.value = key;
-            opt.innerText = key;
-            select.appendChild(opt);
-          });
-        } else {
-          alert("Не вдалося прочитати файл або він порожній!");
-        }
-      }
-
-      // Вибір папки для результатів
-      async function selectFolder() {
-        const path = await ipcRenderer.invoke("select-folder");
-        if (path) {
-          document.getElementById("outputFolder").value = path;
-          saveConfig("outputDir", path);
-        }
-      }
-
-      // === ЗАПУСК ===
-      async function startProcess() {
-        const logsDiv = document.getElementById("logs");
-        logsDiv.innerHTML = "Запуск...<br>";
-
-        const data = {
-          projectName: document.getElementById("projectName").value,
-          templateText:
-            promptsData[document.getElementById("promptSelect").value],
-          title: document.getElementById("storyTitle").value,
-          voice: document.getElementById("voice").value,
-          language: document.getElementById("language").value,
-          outputFolder: document.getElementById("outputFolder").value,
-          modelName: document.getElementById("modelSelect").value,
-        };
-
-        if (!data.outputFolder || !data.templateText) {
-          alert("Заповніть поля та оберіть файл промптів!");
-          return;
-        }
-
-        const res = await ipcRenderer.invoke("start-process", data);
-        if (!res.success) alert("Помилка: " + res.error);
-      }
-
-      // === ІНТЕРФЕЙС ===
-      function showPage(pageName) {
-        document
-          .querySelectorAll(".page")
-          .forEach((p) => p.classList.remove("active"));
-        document
-          .querySelectorAll(".sidebar-btn")
-          .forEach((b) => b.classList.remove("active"));
-        document.getElementById(`page-${pageName}`).classList.add("active");
-
-        const btnIndex =
-          pageName === "generator" ? 0 : pageName === "settings" ? 1 : 2;
-        document
-          .querySelectorAll(".sidebar-btn")
-          [btnIndex].classList.add("active");
-
-        // Якщо переходимо на історію, завантажуємо дані
-        if (pageName === "history") {
-          loadHistory();
-        }
-      }
-
-      function toggleApiKeyVisibility() {
-        const input = document.getElementById("apiKeyInput");
-        const icon = document.querySelector(".toggle-password");
-        if (input.type === "password") {
-          input.type = "text";
-          icon.classList.remove("fa-eye");
-          icon.classList.add("fa-eye-slash");
-        } else {
-          input.type = "password";
-          icon.classList.remove("fa-eye-slash");
-          icon.classList.add("fa-eye");
-        }
-      }
-
-      // Логи та Оновлення
-      ipcRenderer.on("log-update", (e, msg) => {
-        const logs = document.getElementById("logs");
-        logs.innerHTML += `> ${msg}<br>`;
-        logs.scrollTop = logs.scrollHeight;
-      });
-
-      ipcRenderer.on("update-message", (e, text) => {
-        const bar = document.getElementById("updateStatus");
-        bar.innerText = text;
-        bar.style.display = "block";
-      });
-
-      // Події для власного заголовка
-      document.getElementById("minimize-btn").addEventListener("click", () => {
-        ipcRenderer.send("minimize-window");
-      });
-
-      document.getElementById("maximize-btn").addEventListener("click", () => {
-        ipcRenderer.send("maximize-window");
-      });
-
-      document.getElementById("close-btn").addEventListener("click", () => {
-        ipcRenderer.send("close-window");
-      });
-
-      // Завантаження історії
-      async function loadHistory() {
-        const history = await ipcRenderer.invoke("get-history");
-        const list = document.getElementById("historyList");
-        list.innerHTML = "";
-        if (history.length === 0) {
-          list.innerHTML = "<p>Немає історій генерацій.</p>";
-          return;
-        }
-        history.forEach((item) => {
-          const div = document.createElement("div");
-          div.className = "history-item";
-          div.innerHTML = `
-            <h4>${item.title}</h4>
-            <p>Проект: ${item.projectName}</p>
-            <p>Шлях: ${item.path}</p>
-            <p>Час: ${new Date(item.timestamp).toLocaleString()}</p>
-            <button onclick="openFolder('${item.path}')">Відкрити папку</button>
-          `;
-          list.appendChild(div);
-        });
-      }
-
-      // Відкриття папки
-      function openFolder(path) {
-        ipcRenderer.invoke("open-folder", path);
-      }
-    </script>
+    <script src="renderer.js"></script>
   </body>
 </html>

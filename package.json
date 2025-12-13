@@ -1,6 +1,6 @@
 {
   "name": "ai-story-generator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "AI Story Generator with Auto-Updates and Gemini Integration",
   "main": "main.js",
   "author": "Oleg",
