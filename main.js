@@ -16,9 +16,6 @@ log.info("App starting...");
 const execPromise = promisify(exec);
 const store = new Store();
 
-// === КОНСТАНТИ ===
-const EDGE_TTS_PATH = String.raw`C:\Users\roadt\AppData\Roaming\Python\Python314\Scripts\edge-tts.exe`;
-
 // Допоміжна функція паузи
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -122,6 +119,13 @@ ipcMain.handle("start-process", async (event, data) => {
     if (!apiKey)
       throw new Error("API ключ не знайдено! Введіть його в налаштуваннях.");
 
+    // ОТРИМУЄМО ШЛЯХ ДО EDGE TTS ЗІ СХОВИЩА
+    const edgeTtsPath = store.get("edgeTtsPath");
+    if (!edgeTtsPath)
+      throw new Error(
+        "Шлях до Edge TTS не вказано! Введіть його в налаштуваннях."
+      );
+
     const genAI = new GoogleGenerativeAI(apiKey);
 
     const selectedModel = modelName || "gemini-2.0-flash";
@@ -212,7 +216,8 @@ ipcMain.handle("start-process", async (event, data) => {
       .replace(/[""]/g, "'");
     await fs.writeFile(tempTextPath, cleanTextForAudio);
 
-    const command = `"${EDGE_TTS_PATH}" --file "${tempTextPath}" --write-media "${audioPath}" --voice ${voice}`;
+    // ВИКОРИСТОВУЄМО ШЛЯХ ЗІ ЗМІННОЇ, А НЕ КОНСТАНТИ
+    const command = `"${edgeTtsPath}" --file "${tempTextPath}" --write-media "${audioPath}" --voice ${voice}`;
     await execPromise(command);
     await fs.unlink(tempTextPath).catch(() => {});
 

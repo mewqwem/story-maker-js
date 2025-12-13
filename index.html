@@ -154,6 +154,32 @@
         </p>
 
         <hr style="border-color: #333; margin: 20px 0" />
+
+        <div class="input-group">
+          <label>Шлях до Edge TTS (.exe):</label>
+          <div style="display: flex; gap: 10px">
+            <input
+              type="text"
+              id="edgeTtsPathInput"
+              placeholder="C:\Users\...\edge-tts.exe"
+            />
+            <button
+              class="secondary"
+              onclick="saveEdgeTtsPath()"
+              style="min-width: 100px"
+            >
+              💾 Зберегти
+            </button>
+          </div>
+        </div>
+        <p
+          id="edgeTtsStatus"
+          style="color: #4caf50; display: none; margin-top: 10px"
+        >
+          Шлях збережено!
+        </p>
+
+        <hr style="border-color: #333; margin: 20px 0" />
         <div style="color: #888; font-size: 12px">
           Версія: <span id="appVersion">1.0.0</span>
         </div>
@@ -173,7 +199,15 @@
         const key = await ipcRenderer.invoke("get-setting", "apiKey");
         if (key) document.getElementById("apiKeyInput").value = key;
 
-        // 2. Завантажуємо шлях до prompts.json
+        // 2. Завантажуємо шлях до Edge TTS
+        const edgeTtsPath = await ipcRenderer.invoke(
+          "get-setting",
+          "edgeTtsPath"
+        );
+        if (edgeTtsPath)
+          document.getElementById("edgeTtsPathInput").value = edgeTtsPath;
+
+        // 3. Завантажуємо шлях до prompts.json
         const savedPromptPath = await ipcRenderer.invoke(
           "get-setting",
           "promptPath"
@@ -182,7 +216,7 @@
           loadPromptsFromFile(savedPromptPath);
         }
 
-        // 3. Завантажуємо папку виводу
+        // 4. Завантажуємо папку виводу
         const savedOutputDir = await ipcRenderer.invoke(
           "get-setting",
           "outputDir"
@@ -190,7 +224,7 @@
         if (savedOutputDir)
           document.getElementById("outputFolder").value = savedOutputDir;
 
-        // 4. Відновлюємо вибір мови, голосу та моделі
+        // 5. Відновлюємо вибір мови, голосу та моделі
         const lastVoice = await ipcRenderer.invoke("get-setting", "lastVoice");
         if (lastVoice) document.getElementById("voice").value = lastVoice;
 
@@ -213,6 +247,14 @@
         const key = document.getElementById("apiKeyInput").value;
         await saveConfig("apiKey", key);
         const status = document.getElementById("saveStatus");
+        status.style.display = "block";
+        setTimeout(() => (status.style.display = "none"), 3000);
+      }
+
+      async function saveEdgeTtsPath() {
+        const path = document.getElementById("edgeTtsPathInput").value;
+        await saveConfig("edgeTtsPath", path);
+        const status = document.getElementById("edgeTtsStatus");
         status.style.display = "block";
         setTimeout(() => (status.style.display = "none"), 3000);
       }
