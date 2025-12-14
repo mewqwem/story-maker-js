@@ -137,3 +137,22 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+node_modules/
+
+# Збірки (те, що ми видалили)
+dist/
+build/
+
+# Системні файли
+.DS_Store
+Thumbs.db
+
+# Наші великі бінарники (FFmpeg не варто тягнути в гіт, краще качати окремо)
+bin/
+
+# Секрети
+.env
+
+# Логи (якщо будуть)
+*.log

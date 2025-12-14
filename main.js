@@ -22,12 +22,12 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200, // Трохи компактніше
-    height: 800,
+    width: 1200,
+    height: 850,
     minWidth: 900,
     minHeight: 600,
     backgroundColor: "#121417",
-    icon: path.join(__dirname, "icon.ico"),
+    icon: path.join(__dirname, "assets", "icon.ico"),
     frame: false, // Без рамки
     webPreferences: {
       nodeIntegration: true,
