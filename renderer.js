@@ -281,9 +281,6 @@ ipcRenderer.on("log-update", (event, msg) => {
   const placeholder = logArea.querySelector(".log-placeholder");
   if (placeholder) placeholder.remove();
 
-  // Чистимо повідомлення від емодзі (опціонально, якщо хочеш строгіший вигляд)
-  // const cleanMsg = msg.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-
   const time = new Date().toLocaleTimeString("uk-UA", { hour12: false });
   const div = document.createElement("div");
   div.className = "log-entry";
@@ -323,7 +320,6 @@ async function loadHistory() {
   history.forEach((item, index) => {
     const div = document.createElement("div");
     div.className = "history-item";
-    // Додаємо затримку анімації через inline стиль, якщо CSS класів недостатньо
     div.style.animationDelay = `${index * 0.1}s`;
 
     div.innerHTML = `
@@ -346,3 +342,27 @@ async function loadHistory() {
     list.appendChild(div);
   });
 }
+
+// --- Логіка Оновлення (Auto-Updater) ---
+ipcRenderer.on("show-update-modal", (event, version) => {
+  const modal = document.getElementById("updateModal");
+  const versionSpan = document.getElementById("newVersionSpan");
+
+  // Перевірка на всяк випадок, якщо елементи не знайдено
+  if (!modal || !versionSpan) return;
+
+  versionSpan.innerText = `v${version}`;
+  modal.classList.add("show");
+
+  // Кнопка "Потім"
+  document.getElementById("btnUpdateLater").onclick = () => {
+    modal.classList.remove("show");
+  };
+
+  // Кнопка "Оновити"
+  document.getElementById("btnUpdateNow").onclick = () => {
+    modal.classList.remove("show");
+    showToast("Завантаження оновлення розпочато...");
+    ipcRenderer.send("confirm-update");
+  };
+});

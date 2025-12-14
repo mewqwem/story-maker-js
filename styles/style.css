@@ -609,3 +609,75 @@ button {
     opacity: 1;
   }
 }
+/* --- MODAL --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Затемнення фону */
+  backdrop-filter: blur(5px); /* Ефект розмиття */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  width: 400px;
+  text-align: center;
+  border: 1px solid var(--primary); /* Підсвітка рамки */
+  box-shadow: 0 0 30px rgba(91, 95, 245, 0.2);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  margin-bottom: 15px;
+}
+
+.modal-header i {
+  font-size: 40px;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  font-size: 22px;
+  margin: 0;
+  color: #fff;
+}
+
+.highlight-text {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.modal-desc {
+  color: var(--text-muted);
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.modal-actions button {
+  width: 130px;
+}

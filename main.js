@@ -41,7 +41,7 @@ function createWindow() {
 
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdates();
   });
 }
 
@@ -56,6 +56,10 @@ ipcMain.on("maximize-window", () => {
 ipcMain.on("close-window", () => mainWindow.close());
 
 // --- Auto Updater ---
+// --- Auto Updater ---
+autoUpdater.autoDownload = false; // Вимикаємо автозавантаження
+autoUpdater.autoInstallOnAppQuit = true;
+
 function sendStatusToWindow(text) {
   log.info(text);
   if (mainWindow) {
@@ -66,19 +70,36 @@ function sendStatusToWindow(text) {
 autoUpdater.on("checking-for-update", () =>
   sendStatusToWindow("Перевірка оновлень...")
 );
-autoUpdater.on("update-available", () =>
-  sendStatusToWindow("Знайдено нову версію. Завантаження...")
-);
+
+// Коли оновлення знайдено, ми НЕ качаємо його, а кажемо вікну показати модалку
+autoUpdater.on("update-available", (info) => {
+  sendStatusToWindow(`Знайдено нову версію: ${info.version}`);
+  if (mainWindow) {
+    mainWindow.webContents.send("show-update-modal", info.version);
+  }
+});
+
 autoUpdater.on("update-not-available", () =>
   sendStatusToWindow("У вас найновіша версія.")
 );
-autoUpdater.on("error", (err) => sendStatusToWindow("Помилка: " + err));
+
+autoUpdater.on("error", (err) =>
+  sendStatusToWindow("Помилка оновлення: " + err)
+);
+
 autoUpdater.on("download-progress", (progressObj) => {
   sendStatusToWindow("Завантаження: " + Math.round(progressObj.percent) + "%");
 });
+
 autoUpdater.on("update-downloaded", () => {
   sendStatusToWindow("Завантажено. Перезапуск...");
+  // Відразу встановлюємо після завантаження
   autoUpdater.quitAndInstall();
+});
+
+// Слухаємо команду від рендерера "Почати завантаження"
+ipcMain.on("confirm-update", () => {
+  autoUpdater.downloadUpdate();
 });
 
 // --- Settings ---

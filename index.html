@@ -242,6 +242,26 @@
         </section>
       </main>
     </div>
+    <div id="updateModal" class="modal-overlay">
+      <div class="modal-content card">
+        <div class="modal-header">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+          <h2>Доступне оновлення</h2>
+        </div>
+        <p>
+          Знайдено нову версію
+          <span id="newVersionSpan" class="highlight-text"></span>.
+        </p>
+        <p class="modal-desc">Бажаєте завантажити та встановити її зараз?</p>
+
+        <div class="modal-actions">
+          <button id="btnUpdateLater" class="btn-secondary">Потім</button>
+          <button id="btnUpdateNow" class="btn-primary">
+            <i class="fa-solid fa-download"></i> Оновити
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div id="updateStatus" class="toast-notification"></div>
 
